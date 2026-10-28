@@ -107,6 +107,10 @@ The choice is remembered per browser.
 
 `aurora-chess-main.zip` is the untouched original snapshot this version was built from.
 
+## Future: AR glasses
+
+Research notes for an AR-glasses prototype (XREAL, HoloDesk-style direct interaction) are in [`docs/ar-glasses-notes.md`](docs/ar-glasses-notes.md). Nothing is implemented yet.
+
 ## Verifying
 
 There is no automated test suite. `tools/cdp.py` is the original project's headless-Chrome helper. It evaluates a JS file in the page and can save a screenshot. It needs `pip install websocket-client`, a Chrome or Chromium binary, and the game served on port 8123:
