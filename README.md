@@ -7,6 +7,10 @@ The game itself is unchanged: same board, rules, pieces, bot, local and online p
 
 ## Running it
 
+**Online:** https://hannes423-debug.github.io/aurora-chess-core/ (GitHub Pages, served from the repository root; `.nojekyll` is included).
+
+**Locally:**
+
 It is a static web app with no build step and no dependencies. Serve the folder over HTTP and open `index.html`:
 
 ```sh
