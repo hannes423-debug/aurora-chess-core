@@ -1,0 +1,190 @@
+/* ==========================================================================
+   AURORA CHESS CORE — minimal presentation
+   --------------------------------------------------------------------------
+   Loads after css/cozy-ui.css. Hides what competes with the board, styles the
+   compact start screen and corner dock built by js/30_core.js, and owns the
+   page background (--core-bg, set by js/30_core.js).
+
+   Controls hidden here keep their element, id and handlers, so keyboard and
+   gamepad shortcuts that .click() them still work (V camera, R/F flip,
+   M move list, Tab all layers).
+   ========================================================================== */
+
+:root {
+  --core-bg: #14122b;
+  --core-ink: #f2eeff;
+  --core-ink-dim: rgba(242, 238, 255, 0.62);
+  --core-surface: rgba(255, 255, 255, 0.07);
+  --core-surface-on: rgba(255, 255, 255, 0.16);
+  --core-edge: rgba(255, 255, 255, 0.16);
+  --core-edge-on: rgba(255, 255, 255, 0.42);
+}
+
+/* ── Background ─────────────────────────────────────────────────────────── */
+html, html body {
+  background: var(--core-bg) !important;
+}
+body.core-bg-transparent,
+html:has(body.core-bg-transparent) {
+  background: transparent !important;
+}
+/* The original animated backgrounds are pinned off by js/30_core.js; make sure
+   their canvases can never paint over or under the board. */
+#bgCanvas, #bgPhoto { display: none !important; }
+
+/* ── Removed / minimised chrome ─────────────────────────────────────────── */
+body.core #accountBadge,
+body.core #offlineBanner,
+body.core #czDock,
+body.core #moveToggle,
+body.core #layerVisToggle,
+body.core #threatVisionToggle,
+body.core #panBoardBtn,
+body.core #hudGearBtn,
+body.core #hudQuickPanel,
+body.core #pauseProfileBtn,
+body.core #pauseTutorialBtn,
+body.core #uiSettingsBtn,
+body.core #replayWelcomeBtn,
+body.core .core-hidden { display: none !important; }
+
+/* Online status only matters during an online match */
+body.core:not(.core-online) #onlineStatusBar,
+body.core:not(.core-online) #onlineWidget { display: none !important; }
+
+/* ── Turn indicator: kept, quieter ──────────────────────────────────────── */
+body.core #hud {
+  font-size: clamp(14px, 1.5vw, 22px) !important;
+  box-shadow: none !important;
+}
+
+/* ── Start screen (inside #mainMenu) ────────────────────────────────────── */
+body.core #mainMenu { background: transparent !important; }
+body.core #mainMenu h1 {
+  font-size: clamp(1.3rem, 3.2vw, 2.8rem) !important;
+  letter-spacing: 0.4em !important;
+  text-shadow: none !important;
+  color: var(--core-ink) !important;
+  opacity: 0.9;
+  margin-bottom: 1.4em !important;
+}
+body.core #mainMenu .core-legacy { display: none !important; }
+body.core #mainMenu.core-more .core-legacy { display: flex !important; }
+body.core #mainMenu.core-more > div.core-legacy { margin-top: 18px; }
+
+#coreStart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--cz-font, system-ui, sans-serif);
+  color: var(--core-ink);
+}
+#coreStart .core-main { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+#coreStart .core-btn {
+  min-width: 190px;
+  padding: 16px 28px;
+  font: inherit;
+  font-size: clamp(16px, 1.6vw, 22px);
+  font-weight: 700;
+  color: var(--core-ink);
+  background: var(--core-surface);
+  border: 1px solid var(--core-edge);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+#coreStart .core-btn:hover,
+#coreStart .core-btn:focus-visible { background: var(--core-surface-on); border-color: var(--core-edge-on); outline: none; }
+
+#coreStart .core-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+#coreStart .core-row-label {
+  min-width: 48px;
+  font-size: clamp(13px, 1.1vw, 16px);
+  color: var(--core-ink-dim);
+  text-align: right;
+}
+#coreStart .core-chip {
+  padding: 8px 14px;
+  font: inherit;
+  font-size: clamp(13px, 1.1vw, 16px);
+  font-weight: 600;
+  color: var(--core-ink-dim);
+  background: transparent;
+  border: 1px solid var(--core-edge);
+  border-radius: 999px;
+  cursor: pointer;
+}
+#coreStart .core-chip.on { color: var(--core-ink); background: var(--core-surface-on); border-color: var(--core-edge-on); }
+#coreMoreBtn {
+  margin-top: 4px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--core-ink-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+#coreMoreBtn:hover { color: var(--core-ink); }
+
+/* ── Corner dock ────────────────────────────────────────────────────────── */
+#coreDock {
+  position: fixed;
+  right: calc(12px + env(safe-area-inset-right));
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 25;
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+body.cz-ingame #coreDock,
+body.ui-hidden #coreDock { display: flex; }
+
+/* Moved-in buttons give up their own fixed positioning */
+#coreDock > * {
+  position: static !important;
+  inset: auto !important;
+  top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+#coreDock .core-icon {
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cz-surface, var(--core-surface));
+  border: 1px solid var(--cz-hairline, var(--core-edge));
+  border-radius: 12px;
+  color: var(--core-ink);
+  cursor: pointer;
+}
+#coreDock .core-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#coreDock .core-icon svg .fill { fill: currentColor; stroke: none; }
+
+#coreDock #uiHideBtn { height: 40px !important; min-width: 44px; border-radius: 12px !important; }
+
+/* While controls are hidden only the toggle that brings them back remains */
+body.ui-hidden #coreDock > *:not(#uiHideBtn) { display: none !important; }
+
+/* ── Idle dimming during a match ────────────────────────────────────────── */
+body.core #coreDock,
+body.core #czTopBar,
+body.core #minimap { transition: opacity 0.6s ease; }
+body.core.core-idle.cz-ingame #coreDock,
+body.core.core-idle.cz-ingame #menuBtn,
+body.core.core-idle.cz-ingame #hintBtn,
+body.core.core-idle.cz-ingame #undoBtn { opacity: 0.18; transition: opacity 0.6s ease; }
+body.core.core-idle.ui-hidden #coreDock { opacity: 0; }
