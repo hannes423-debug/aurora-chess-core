@@ -8,9 +8,9 @@
    Owns four things:
      1. the page background — one plain, configurable colour (or transparency)
      2. a compact start screen inside the existing #mainMenu
-     3. a board-only match screen: the only in-game control left is the turn
-        indicator, which opens the pause menu; camera, flip, fullscreen and
-        background live in that menu
+     3. a board-only match screen: nothing on screen but the board; the
+        (invisible) turn-indicator spot at the top opens the pause menu,
+        which holds camera, flip, fullscreen and background
      4. camera framing that keeps all four layers in view at any aspect ratio
 
    Same rule as js/24_cozy_ui.js: existing elements are MOVED, never
@@ -190,9 +190,10 @@
   }
 
   /* ======================================================================
-     3. MATCH SCREEN — board only. ☰, hint, undo and the layer minimap are
-     hidden by css/core.css. The pause menu opens from Esc or a tap on the
-     turn indicator, and carries the view controls.
+     3. MATCH SCREEN — board only. ☰, hint, undo, the layer minimap and the
+     turn indicator are hidden by css/core.css. The pause menu opens from Esc
+     or a tap where the (transparent) turn indicator sits, and carries the
+     view controls.
      ====================================================================== */
   var ICONS = {
     fullscreen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
@@ -326,7 +327,7 @@
 
   function viewBox() {
     var W = window.innerWidth, H = window.innerHeight;
-    var side = Math.min(64, W * 0.06), top = Math.min(72, H * 0.1), bottom = Math.min(24, H * 0.04);
+    var side = Math.min(64, W * 0.06), top = Math.min(24, H * 0.04), bottom = top;
     return { l: -1 + 2 * side / W, r: 1 - 2 * side / W, t: 1 - 2 * top / H, b: -1 + 2 * bottom / H };
   }
 
@@ -385,8 +386,7 @@
   });
 
   /* ======================================================================
-     KEYBOARD — B background · H hide turn indicator · P fullscreen ·
-     Esc menu
+     KEYBOARD — B background · P fullscreen · Esc menu
      (F and R already flip the board, V cycles the camera, Q/E change layer.)
      ====================================================================== */
   // Esc opens the pause menu (☰ is hidden here). The original handler only
@@ -405,7 +405,6 @@
     var k = (e.key || '').toLowerCase();
     if (k === 'b') { cycleBackground(); }
     else if (k === 'p') { toggleFullscreen(); }
-    else if (k === 'h') { var hb = $('uiHideBtn'); if (hb) hb.click(); }
   });
 
   /* ======================================================================

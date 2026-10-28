@@ -57,12 +57,12 @@ body.core .core-hidden { display: none !important; }
 body.core:not(.core-online) #onlineStatusBar,
 body.core:not(.core-online) #onlineWidget { display: none !important; }
 
-/* ── Turn indicator: kept, quieter ──────────────────────────────────────── */
+/* ── Turn indicator: invisible, but its spot (top centre) still opens the
+   pause menu on tap/click. !important also beats its entry animation. ── */
 body.core #hud {
-  font-size: clamp(14px, 1.5vw, 22px) !important;
-  box-shadow: none !important;
+  opacity: 0 !important;
   pointer-events: auto !important;
-  cursor: pointer;                 /* tap opens the pause menu */
+  cursor: pointer;
 }
 
 /* ── Start screen (inside #mainMenu) ────────────────────────────────────── */

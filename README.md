@@ -26,9 +26,9 @@ Any static host works as well, e.g. GitHub Pages. The service worker only regist
 
 The start screen has two buttons, **vs Computer** and **2 Players**. Below them you choose the bot strength (Easy / Medium / Hard / Max) and your colour. **More…** opens the original full menu: the step-by-step Play flow (Arcade and Capture-the-Flag modes, online play, time controls), Puzzles, game review, settings, profile and help.
 
-During a game the screen shows only the board and the turn indicator ("White to move") at the top. There are no buttons on screen.
+During a game the screen shows only the board: no buttons and no text.
 
-* **Menu:** tap or click the turn indicator, or press **Esc**. The pause menu has Resume, Restart, a row of view controls (camera mode, flip 180°, fullscreen, background), Offer Draw, Resign, Settings and Exit. The start screen only appears when no game is running.
+* **Menu:** tap or click the top centre of the screen (where the turn indicator used to be), or press **Esc**. The pause menu has Resume, Restart, a row of view controls (camera mode, flip 180°, fullscreen, background), Offer Draw, Resign, Settings and Exit. The start screen only appears when no game is running.
 * **Changing layer:** swipe up/down on the board (touch), or use Q / E, 1–4 or Shift+scroll (keyboard and mouse).
 * Hint and undo are not available in this version.
 
@@ -47,7 +47,6 @@ During a game the screen shows only the board and the turn indicator ("White to 
 | Esc | pause menu (or deselect a selected piece) |
 | **P** | fullscreen on/off *(new)* |
 | **B** | cycle background *(new)* |
-| **H** | hide / show the turn indicator *(new)* |
 
 Mouse, touch and gamepad input work as in the original.
 
@@ -74,7 +73,7 @@ The choice is remembered per browser.
 * Use **P**, the fullscreen button, or the browser's own fullscreen (F11).
 * The renderer scales to any window size.
 * In the Tilt and Free camera modes, the camera backs off just far enough to keep all four layers in view, whatever the aspect ratio (4:3, 16:9, 21:9, portrait, 4K). It keeps the original viewing angle and re-frames when the window is resized.
-* For a bare board on a projector, use: fullscreen (**P**), `black` background (**B**), hide the turn indicator (**H**).
+* For a bare board on a projector, use: fullscreen (**P**) and the `black` background (**B**).
 
 ## What changed from Aurora Chess
 
@@ -90,7 +89,7 @@ The choice is remembered per browser.
 * The first-run welcome wizard is skipped. Help and the tutorial are still in **More…**.
 * Ambient music is off by default. It can be turned back on in Settings → Sound.
 * The menu subtitle is hidden. Login, server status and support links moved under **More…**.
-* All in-game buttons are hidden: ☰ (use the turn indicator or Esc), hint, undo, the layer minimap (use swipe or Q/E), Moves (M), Layers/All (Tab), Pan, TTS threat scan, Quick panel, help, the theme dock and the hide-UI toggle (H). Camera, flip, fullscreen and background moved into the pause menu.
+* All in-game buttons are hidden: ☰ (tap the top centre or press Esc), the turn indicator ("White to move"), hint, undo, the layer minimap (use swipe or Q/E), Moves (M), Layers/All (Tab), Pan, TTS threat scan, Quick panel, help, the theme dock and the hide-UI toggle. Camera, flip, fullscreen and background moved into the pause menu.
 * Games started from the core start screen have hint and undo turned off.
 * Esc now reliably opens the pause menu. In the original it was immediately closed again by the menu keyboard-navigation handler.
 * The online status pill only appears during an online match.
