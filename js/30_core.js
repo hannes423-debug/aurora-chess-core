@@ -5,12 +5,13 @@
    what the game IS: the 8×8×4 board, the rules engine, the bot, local and
    online play, puzzles and replays are all the original modules, untouched.
 
-   Owns five things:
+   Owns four things:
      1. the page background — one plain, configurable colour (or transparency)
      2. a compact start screen inside the existing #mainMenu
-     3. a small corner dock (camera · flip · fullscreen · background · hide UI)
-     4. idle dimming of on-screen controls, for display on a large screen
-     5. camera framing that keeps all four layers in view at any aspect ratio
+     3. a board-only match screen: the only in-game control left is the turn
+        indicator, which opens the pause menu; camera, flip, fullscreen and
+        background live in that menu
+     4. camera framing that keeps all four layers in view at any aspect ratio
 
    Same rule as js/24_cozy_ui.js: existing elements are MOVED, never
    recreated, so every id, inline handler and gamepad .click() keeps working.
@@ -137,6 +138,8 @@
     pick('[data-ps3diff="' + coreDiff + '"]');
     pick('[data-ps3color="' + coreColor + '"]');
     pick('[data-time="0"]');
+    // No hint / undo buttons in this build
+    ['ps3HintToggle', 'ps3UndoToggle'].forEach(function (id) { var t = $(id); if (t) t.checked = false; });
     $('ps3Play').click();
   }
   window.coreStartGame = startGame;
@@ -187,13 +190,25 @@
   }
 
   /* ======================================================================
-     3. CORNER DOCK
+     3. MATCH SCREEN — board only. ☰, hint, undo and the layer minimap are
+     hidden by css/core.css. The pause menu opens from Esc or a tap on the
+     turn indicator, and carries the view controls.
      ====================================================================== */
   var ICONS = {
     fullscreen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
     exitFull:   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>',
     background: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" class="fill"/></svg>'
   };
+
+  function inMatch() { return document.body.classList.contains('cz-ingame'); }
+  function anyMenuOpen() {
+    return ['mainMenu', 'pauseMenu', 'endMenu', 'settingsOverlay', 'helpOverlay', 'promotionPopup']
+      .some(function (id) { var e = $(id); return e && getComputedStyle(e).display !== 'none'; });
+  }
+  function openPause() {
+    var mb = $('menuBtn');
+    if (mb && inMatch() && !anyMenuOpen()) mb.click();
+  }
 
   function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
   function fsSupported() {
@@ -222,14 +237,16 @@
     b.classList.toggle('on', on);
   }
 
-  function buildDock() {
-    var dock = document.createElement('div');
-    dock.id = 'coreDock';
+  function buildViewRow() {
+    var pm = $('pauseMenu');
+    if (!pm) return;
+    var row = document.createElement('div');
+    row.id = 'coreViewRow';
 
-    // Moved in from the cozy top bar / dock; listeners and ids survive.
+    // Moved in from the cozy top bar; listeners and ids survive.
     ['viewToggle', 'rotateBoardBtn'].forEach(function (id) {
       var el = $(id);
-      if (el) dock.appendChild(el);
+      if (el) row.appendChild(el);
     });
 
     var fs = document.createElement('button');
@@ -237,38 +254,31 @@
     fs.className = 'core-icon';
     fs.addEventListener('click', toggleFullscreen);
     if (!fsSupported()) fs.style.display = 'none';
-    dock.appendChild(fs);
+    row.appendChild(fs);
 
     var bg = document.createElement('button');
     bg.id = 'coreBgBtn';
     bg.className = 'core-icon';
     bg.innerHTML = ICONS.background;
     bg.addEventListener('click', cycleBackground);
-    dock.appendChild(bg);
+    row.appendChild(bg);
 
-    var hide = $('uiHideBtn');
-    if (hide) { hide.title = 'Hide controls (H)'; dock.appendChild(hide); }
+    // Under Resume / Restart
+    var restart = $('restartBtn');
+    pm.insertBefore(row, restart ? restart.nextSibling : pm.firstChild);
 
-    document.body.appendChild(dock);
     syncFullscreenBtn();
     applyBackground(coreBg);   // refresh the button title
     document.addEventListener('fullscreenchange', syncFullscreenBtn);
     document.addEventListener('webkitfullscreenchange', syncFullscreenBtn);
   }
 
-  /* ======================================================================
-     4. IDLE DIMMING — controls fade back after a few seconds without input
-     during a match, so a projected board is not framed by buttons.
-     ====================================================================== */
-  var IDLE_MS = 4000, _idleT = 0;
-  function wake() {
-    document.body.classList.remove('core-idle');
-    clearTimeout(_idleT);
-    _idleT = setTimeout(function () { document.body.classList.add('core-idle'); }, IDLE_MS);
+  function wireHud() {
+    var hud = $('hud');
+    if (!hud) return;
+    hud.title = 'Menu (Esc)';
+    hud.addEventListener('click', openPause);
   }
-  ['pointermove', 'pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(function (ev) {
-    window.addEventListener(ev, wake, { passive: true, capture: true });
-  });
 
   // The online status pill is only useful during an online match.
   setInterval(function () {
@@ -277,7 +287,7 @@
   }, 1000);
 
   /* ======================================================================
-     5. CAMERA FRAMING
+     4. CAMERA FRAMING
      TILT and FREE use fixed camera distances tuned for one window shape, so
      on wide or tall displays the top layer ran off-screen. Keep the original
      viewing angle, aim at the centre of the stack and back off just far
@@ -375,9 +385,19 @@
   });
 
   /* ======================================================================
-     KEYBOARD — B background · H hide controls · P fullscreen
+     KEYBOARD — B background · H hide turn indicator · P fullscreen ·
+     Esc menu
      (F and R already flip the board, V cycles the camera, Q/E change layer.)
      ====================================================================== */
+  // Esc opens the pause menu (☰ is hidden here). The original handler only
+  // did so after the first move, and the menu-navigation handler in
+  // js/18_ctf_input.js then closed it again on the same keypress. Capture
+  // phase so it runs first; a selection is still left to the original to clear.
+  window.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || selectedPawn || !inMatch() || anyMenuOpen()) return;
+    openPause();
+    e.stopImmediatePropagation();
+  }, true);
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
     var t = e.target;
@@ -403,10 +423,10 @@
 
   function boot() {
     buildStart();
-    buildDock();
+    buildViewRow();
+    wireHud();
     trimSettings();
     refit();
-    wake();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

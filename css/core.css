@@ -42,6 +42,11 @@ body.core #threatVisionToggle,
 body.core #panBoardBtn,
 body.core #hudGearBtn,
 body.core #hudQuickPanel,
+body.core #menuBtn,
+body.core #hintBtn,
+body.core #undoBtn,
+body.core #minimap,
+body.core #uiHideBtn,
 body.core #pauseProfileBtn,
 body.core #pauseTutorialBtn,
 body.core #uiSettingsBtn,
@@ -56,6 +61,8 @@ body.core:not(.core-online) #onlineWidget { display: none !important; }
 body.core #hud {
   font-size: clamp(14px, 1.5vw, 22px) !important;
   box-shadow: none !important;
+  pointer-events: auto !important;
+  cursor: pointer;                 /* tap opens the pause menu */
 }
 
 /* ── Start screen (inside #mainMenu) ────────────────────────────────────── */
@@ -128,21 +135,16 @@ body.core #mainMenu.core-more > div.core-legacy { margin-top: 18px; }
 }
 #coreMoreBtn:hover { color: var(--core-ink); }
 
-/* ── Corner dock ────────────────────────────────────────────────────────── */
-#coreDock {
-  position: fixed;
-  right: calc(12px + env(safe-area-inset-right));
-  bottom: calc(12px + env(safe-area-inset-bottom));
-  z-index: 25;
-  display: none;
+/* ── View controls row (inside the pause menu) ──────────────────────────── */
+#coreViewRow {
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  margin: 10px 0 2px;
 }
-body.cz-ingame #coreDock,
-body.ui-hidden #coreDock { display: flex; }
-
 /* Moved-in buttons give up their own fixed positioning */
-#coreDock > * {
+#coreViewRow > * {
   position: static !important;
   inset: auto !important;
   top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
@@ -150,10 +152,10 @@ body.ui-hidden #coreDock { display: flex; }
   margin: 0 !important;
   flex: 0 0 auto;
 }
-#coreDock .core-icon {
-  width: 40px;
-  height: 40px;
-  padding: 9px;
+#coreViewRow .core-icon {
+  width: 44px;
+  height: 44px;
+  padding: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -163,7 +165,7 @@ body.ui-hidden #coreDock { display: flex; }
   color: var(--core-ink);
   cursor: pointer;
 }
-#coreDock .core-icon svg {
+#coreViewRow .core-icon svg {
   width: 100%;
   height: 100%;
   fill: none;
@@ -172,19 +174,4 @@ body.ui-hidden #coreDock { display: flex; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-#coreDock .core-icon svg .fill { fill: currentColor; stroke: none; }
-
-#coreDock #uiHideBtn { height: 40px !important; min-width: 44px; border-radius: 12px !important; }
-
-/* While controls are hidden only the toggle that brings them back remains */
-body.ui-hidden #coreDock > *:not(#uiHideBtn) { display: none !important; }
-
-/* ── Idle dimming during a match ────────────────────────────────────────── */
-body.core #coreDock,
-body.core #czTopBar,
-body.core #minimap { transition: opacity 0.6s ease; }
-body.core.core-idle.cz-ingame #coreDock,
-body.core.core-idle.cz-ingame #menuBtn,
-body.core.core-idle.cz-ingame #hintBtn,
-body.core.core-idle.cz-ingame #undoBtn { opacity: 0.18; transition: opacity 0.6s ease; }
-body.core.core-idle.ui-hidden #coreDock { opacity: 0; }
+#coreViewRow .core-icon svg .fill { fill: currentColor; stroke: none; }
