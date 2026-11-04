@@ -784,7 +784,7 @@ document.getElementById('openOnlineBtn').onclick = function() {
 
       <div style="font-size:9px;color:#333;line-height:1.8;">
         Aurora Chess &copy; 2025<br>
-        <a href="http://100.94.74.5:3000/privacy" target="_blank" rel="noopener" style="color:#333;text-decoration:none;">Privacy Policy</a>
+        <a href="privacy.html" target="_blank" rel="noopener" style="color:#333;text-decoration:none;">Privacy Policy</a>
       </div>
 
       <button id="supCloseBtn" style="position:absolute;top:10px;right:12px;background:none;border:none;color:#3a7a9b;font-size:16px;cursor:pointer;font-family:monospace;line-height:1;">✕</button>

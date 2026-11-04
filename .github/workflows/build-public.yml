@@ -1,0 +1,52 @@
+# Builds and verifies the PUBLIC copy of the game (dist/public).
+#
+# This workflow does NOT deploy anything yet: the hosting target (GitHub Pages
+# deploy repo, Cloudflare Pages, ...) is still to be decided. It proves that
+# the allowlisted build is complete and clean, and keeps it as a short-lived
+# workflow artifact for review. The deploy job is added once hosting is chosen.
+#
+# Security notes:
+# - GITHUB_TOKEN is read-only; no secrets are used.
+# - Third-party actions are pinned to full commit SHAs (tag in the comment).
+# - persist-credentials: false keeps the token out of .git/config.
+name: Build public game
+
+on:
+  push:
+    branches: [secure-public-build]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-public-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Build and verify public copy
+        run: bash tools/build-public.sh
+
+      - name: Confirm no repository metadata in the build
+        run: |
+          test ! -e dist/public/.git
+          test ! -e dist/public/.github
+          ! find dist/public -name '*.map' | grep -q .
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: public-build
+          path: |
+            dist/public
+            dist/public-manifest.sha256
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error

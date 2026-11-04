@@ -22,7 +22,7 @@ const GUEST_USER    = '__guest__';
 // 1. Go to https://console.cloud.google.com/ → APIs & Services → Credentials
 // 2. Create an OAuth 2.0 Client ID (Web application type)
 // 3. Add your Pi server address to "Authorized JavaScript origins"
-//    e.g. http://192.168.0.109:3000  or  http://localhost:3000
+//    e.g. http://<server-address>:3000  or  http://localhost:3000
 // 4. Paste the client_id below (not the secret — just the ID)
 const GOOGLE_CLIENT_ID = '';  // e.g. '123456789-abc.apps.googleusercontent.com'
 
